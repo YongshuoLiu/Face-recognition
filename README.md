@@ -3,5 +3,6 @@ You can download model pth as fllow:
 
 mask r-cnn:  
 
-dnet:
+dnet:  
+
 facenet:
