@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+   <title>Webcam Capture</title>
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <style>
+                body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f3f3;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 50px;
+        }
+        #videoElement {
+          position: absolute;
+          left: 300px;
+          bottom: 100px;
+          width: 200;
+            height: 100;
+             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        #checkin {
+          position: absolute;
+          bottom: 20px;
+            padding: 10px 150px;
+             background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #capture:hover {
+            background: #555;
+        }
+
+ h2 {
+  position: relative;
+  			font-size: 36px;
+  top: -80px;
+
+  color: #333;
+        }
+
+  h3 {
+     position: relative;
+  			font-size: 24px;
+  top: 415px;
+
+  color: #008000;
+  }
+    </style>
+</head>
+<body>
+  <div id="container">
+        <video autoplay="true" id="videoElement"></video>
+        <button id="checkin">签到</button>
+        <h2 > 签到系统 </h2>
+        <h3  id="my-header">  </h3>
+    </div>
+
+    <script>
+
+        var video = document.querySelector("#videoElement");
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (err0r) {
+                    console.log("Something went wrong!");
+                });
+        }
+        $("#checkin").click(function() {
+
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            var dataUrl = canvas.toDataURL('image/png');
+
+            $.post("/checkin", { imageBase64: dataUrl }, function(data) {
+                $('#my-header').text(data);
+                setTimeout(function() {
+                    $('#my-header').text(' ');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

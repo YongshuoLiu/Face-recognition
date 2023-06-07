@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Webcam Capture</title>
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f3f3;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 50px;
+        }
+        #videoElement {
+          position: absolute;
+          left: 30px;
+          bottom: 100px;
+          width: 200;
+            height: 100;
+             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        #capture {
+          position: absolute;
+          left: 280px;
+          bottom: 30px;
+            padding: 10px 20px;
+             background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #capture:hover {
+            background: #555;
+        }
+
+        #display-image {
+          position: absolute;
+          right: 50px;
+          top: 110px;
+            width: 470px;
+  height: 320px;
+             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #display-image2 {
+            position: absolute;
+          right: 370px;
+          top: 440px;
+            width: 150px;
+            height: 150px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #display-image3 {
+          position: absolute;
+          right: 210px;
+          top: 440px;
+            width: 150px;
+            height: 150px;
+              border: none;
+            border-radius: 5px;
+              cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+         #display-image5 {
+            position: absolute;
+            right: 50px;
+          top: 440px;
+            width: 150px;
+            height: 150px;
+              border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+                h2 {
+  position: relative;
+  			font-size: 36px;
+  top: -80px;
+  right: 270px;
+  color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <video autoplay="true" id="videoElement"></video>
+        <button id="capture">Capture</button>
+        <img id="display-image" src="" alt="Image will display here">
+        <img id="display-image2" src="" alt="Image will display here">
+        <img id="display-image3" src="" alt="Image will display here">
+        <img id="display-image5" src="" alt="Image will display here">
+
+
+        <h2> 签到系统 </h2>
+    </div>
+
+    <script>
+
+        var video = document.querySelector("#videoElement");
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (err0r) {
+                    console.log("Something went wrong!");
+                });
+        }
+
+
+
+        $("#capture").click(function() {
+
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            var dataUrl = canvas.toDataURL('image/png');
+
+            $.post("/capture", { imageBase64: dataUrl }, function(data) {
+                $('#display-image').attr('src', '/get_image');
+                 $('#display-image2').attr('src', '/get_image2');
+                 $('#display-image3').attr('src', '/get_image3');
+                 $('#display-image5').attr('src', '/get_image5');
+            });
+        });
+    </script>
+</body>
+</html>
